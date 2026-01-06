@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python read_doc_structure.py:*)",
+      "Bash(python:*)",
+      "Bash(dir:*)"
+    ]
+  }
+}

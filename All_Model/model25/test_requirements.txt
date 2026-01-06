@@ -1,0 +1,17 @@
+# 测试依赖包
+# 用于运行 test_detection.py
+
+# 核心测试框架
+pytest>=7.0.0
+pytest-cov>=4.0.0
+
+# 基础依赖
+numpy>=1.21.0
+opencv-python>=4.5.0
+pyyaml>=6.0
+
+# 可选依赖（如果需要API测试）
+flask>=2.0.0
+
+# YOLO依赖（如果未安装ultralytics）
+# ultralytics>=8.0.0

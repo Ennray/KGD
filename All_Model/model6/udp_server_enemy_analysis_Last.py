@@ -96,7 +96,7 @@ class EnemyAnalysisServer:
         self._running = True
         self._packet_counter = 0
 
-        print("✅ 完全修复numpy警告版本服务器初始化完成")
+        print(" 完全修复numpy警告版本服务器初始化完成")
 
     async def websocket_handler(self, websocket, path=None):
         """WebSocket连接处理器"""
@@ -183,7 +183,7 @@ class EnemyAnalysisServer:
                                                 self.websocket_clients.remove(client)
 
                                         if send_count > 0 and maneuver:
-                                            print(f"📤 发送: {self.get_maneuver_chinese(maneuver)}->{target_goal}")
+                                            print(f" 发送: {self.get_maneuver_chinese(maneuver)}->{target_goal}")
 
                                     last_send_time = current_time
 
@@ -295,15 +295,15 @@ class EnemyAnalysisServer:
         """检测enemy_1的转向机动 - 直接使用0-360度航向"""
         with self._enemy1_lock:
             if len(self.enemy1_heading_history) < 3:
-                print(f"❌ 数据不足: {len(self.enemy1_heading_history)}个航向点")
+                print(f" 数据不足: {len(self.enemy1_heading_history)}个航向点")
                 return ""
 
             headings = list(self.enemy1_heading_history)
 
-            # ✅ 当前航向本来就是0-360度
+            #  当前航向本来就是0-360度
             current_heading = headings[-1] if headings else 0
-            print(f"🔄 当前航向: {current_heading:.1f}°")
-            print(f"🔍 最近航向数据: {[f'{h:.1f}°' for h in headings[-8:]]}")
+            print(f" 当前航向: {current_heading:.1f}°")
+            print(f" 最近航向数据: {[f'{h:.1f}°' for h in headings[-8:]]}")
 
             # 阈值设置
             right_turn_threshold = 300.0  # 大于300度就是右转（往北）
@@ -312,8 +312,8 @@ class EnemyAnalysisServer:
             # 检查最近3个点的航向
             recent_headings = headings[-3:]
 
-            print(f"📊 西向基准: 270°, 右转阈值: >{right_turn_threshold}°, 左转阈值: <{left_turn_threshold}°")
-            print(f"📊 检查点航向: {[f'{h:.1f}°' for h in recent_headings]}")
+            print(f" 西向基准: 270°, 右转阈值: >{right_turn_threshold}°, 左转阈值: <{left_turn_threshold}°")
+            print(f" 检查点航向: {[f'{h:.1f}°' for h in recent_headings]}")
 
             # 统计符合转向条件的点数
             right_turn_count = 0
@@ -331,13 +331,13 @@ class EnemyAnalysisServer:
 
             # 判断转向（需要连续2个点符合条件）
             if right_turn_count >= 2:
-                print(f"🎯 检测到右转: {right_turn_count}个点航向 > {right_turn_threshold}°")
+                print(f" 检测到右转: {right_turn_count}个点航向 > {right_turn_threshold}°")
                 return "right_turn"
             elif left_turn_count >= 2:
-                print(f"🎯 检测到左转: {left_turn_count}个点航向 < {left_turn_threshold}°")
+                print(f" 检测到左转: {left_turn_count}个点航向 < {left_turn_threshold}°")
                 return "left_turn"
             else:
-                print(f"📊 未检测到转向: 右转计数{right_turn_count}, 左转计数{left_turn_count}")
+                print(f" 未检测到转向: 右转计数{right_turn_count}, 左转计数{left_turn_count}")
                 return ""
 
     def detect_enemy1_vertical_maneuver(self):
@@ -362,7 +362,7 @@ class EnemyAnalysisServer:
                 if dt > 0:
                     vertical_changes.append((altitudes[i] - altitudes[i - 1]) / dt)
 
-            # ✅ 完全修复：使用安全计算函数
+            #  完全修复：使用安全计算函数
             if len(vertical_changes) == 0:
                 return ""
 
@@ -426,7 +426,7 @@ class EnemyAnalysisServer:
 
             distances = list(self._cluster_distance_history)
 
-            # ✅ 基于当前状态：计算最近的变化趋势
+            #  基于当前状态：计算最近的变化趋势
             recent_changes = []
             for i in range(1, min(4, len(distances))):
                 if distances[-i - 1] > 10:  # 避免除零
@@ -437,23 +437,23 @@ class EnemyAnalysisServer:
             if len(recent_changes) < 2:
                 return ""
 
-            # ✅ 使用安全计算
+            #  使用安全计算
             avg_change = self.safe_numpy_mean(recent_changes)
 
             if not np.isfinite(avg_change) or avg_change <= 0:
                 return ""
 
-            #print(f"📊 当前间距: {current_distance:.1f}m, 平均变化: {avg_change:.3f}x")
+            #print(f" 当前间距: {current_distance:.1f}m, 平均变化: {avg_change:.3f}x")
 
-            # ✅ 1.3倍散开阈值、0.7倍聚合阈值
+            #  1.3倍散开阈值、0.7倍聚合阈值
             diverge_threshold = 1.3  # 1.3倍算散开
             converge_threshold = 0.7  # 0.7倍算聚合
 
             if avg_change > diverge_threshold:
-                print(f"🎯 当前状态散开: 平均变化{avg_change:.3f}倍 (> {diverge_threshold}x)")
+                print(f" 当前状态散开: 平均变化{avg_change:.3f}倍 (> {diverge_threshold}x)")
                 return "diverge"
             elif avg_change < converge_threshold:
-                print(f"🎯 当前状态聚合: 平均变化{avg_change:.3f}倍 (< {converge_threshold}x)")
+                print(f" 当前状态聚合: 平均变化{avg_change:.3f}倍 (< {converge_threshold}x)")
                 return "converge"
 
             return ""
@@ -774,7 +774,7 @@ class EnemyAnalysisServer:
                             self._prediction_cache["last_update_time"] = time.time()
 
                         if final_maneuver:
-                            print(f"🎯 最终输出: {self.get_maneuver_chinese(final_maneuver)}->{most_common_goal}")
+                            print(f" 最终输出: {self.get_maneuver_chinese(final_maneuver)}->{most_common_goal}")
 
                     else:
                         with self._prediction_lock:
@@ -816,7 +816,7 @@ class EnemyAnalysisServer:
                 except Exception:
                     pass
         except KeyboardInterrupt:
-            print("\n🛑 服务器正在关闭...")
+            print("\n 服务器正在关闭...")
             self._running = False
         finally:
             sock.close()
